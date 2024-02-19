@@ -28,6 +28,6 @@ public class MessageServiceImpl implements MessageService {
 
         notificationManagerService.sendNotification(notificationRequest);
 
-        return new SendMessageResponse("Message sent successfully");
+        return new SendMessageResponse("Message started to be processed");
     }
 }
