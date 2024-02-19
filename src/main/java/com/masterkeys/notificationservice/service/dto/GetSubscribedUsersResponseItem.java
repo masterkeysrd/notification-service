@@ -3,15 +3,17 @@ package com.masterkeys.notificationservice.service.dto;
 import java.util.List;
 import java.util.UUID;
 
+import com.masterkeys.notificationservice.model.Channel;
+
 public class GetSubscribedUsersResponseItem {
     private UUID id;
     private String phoneNumber;
     private String email;
     private String deviceToken;
-    private List<String> channels;
+    private List<Channel> channels;
 
     public GetSubscribedUsersResponseItem(UUID id, String phoneNumber, String email, String deviceToken,
-            List<String> channels) {
+            List<Channel> channels) {
         this.id = id;
         this.phoneNumber = phoneNumber;
         this.email = email;
@@ -51,11 +53,11 @@ public class GetSubscribedUsersResponseItem {
         this.deviceToken = deviceToken;
     }
 
-    public List<String> getChannels() {
+    public List<Channel> getChannels() {
         return channels;
     }
 
-    public void setChannels(List<String> channels) {
+    public void setChannels(List<Channel> channels) {
         this.channels = channels;
     }
 

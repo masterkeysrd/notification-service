@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.masterkeys.notificationservice.model.Channel;
 import com.masterkeys.notificationservice.service.UserService;
 import com.masterkeys.notificationservice.service.dto.GetSubscribedUsersResponse;
 import com.masterkeys.notificationservice.service.dto.GetSubscribedUsersResponseItem;
@@ -24,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
         for (int i = 0; i < 1000; i++) {
             users.add(new GetSubscribedUsersResponseItem(UUID.randomUUID(), "+123456789" + i,
-                    "user" + i + "@example.com", "deviceToken" + i, List.of("SMS", "EMAIL", "PUSH")));
+                    "user" + i + "@example.com", "deviceToken" + i, List.of(Channel.EMAIL, Channel.PUSH, Channel.SMS)));
         }
     }
 

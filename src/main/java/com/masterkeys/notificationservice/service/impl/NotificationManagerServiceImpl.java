@@ -1,14 +1,15 @@
 package com.masterkeys.notificationservice.service.impl;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.masterkeys.notificationservice.service.NotificationManagerService;
-import com.masterkeys.notificationservice.service.UserService;
-import com.masterkeys.notificationservice.service.dto.Recipient;
-import com.masterkeys.notificationservice.service.dto.SendChannelNotificationRequest;
-import com.masterkeys.notificationservice.service.dto.SendNotificationRequest;
+import com.masterkeys.notificationservice.model.Channel;
+import com.masterkeys.notificationservice.service.*;
+import com.masterkeys.notificationservice.service.dto.*;
 
 @Service
 public class NotificationManagerServiceImpl implements NotificationManagerService {
@@ -16,8 +17,16 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
 
     private final UserService userService;
 
-    public NotificationManagerServiceImpl(UserService userService) {
+    private final Map<Channel, NotificationService> notificationServices;
+
+    public NotificationManagerServiceImpl(UserService userService, EmailNotificationService emailNotificationService,
+            PushNotificationService pushNotificationService, SMSNotificationService smsNotificationService) {
         this.userService = userService;
+
+        notificationServices = Map.of(
+                Channel.EMAIL, emailNotificationService,
+                Channel.PUSH, pushNotificationService,
+                Channel.SMS, smsNotificationService);
     }
 
     @Override
@@ -25,19 +34,33 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
         logger.debug("Sending notification {}", request);
 
         var subscribedUsers = userService.getSubscribedUsersByTopic(request.getCategory());
-        subscribedUsers.getUsers().parallelStream().flatMap(user -> {
-            return user.getChannels().stream().map(channel -> {
-                // Sleep for 1 second to simulate the time it takes to send a notification
-                try {
-                    Thread.sleep(1000L);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return new SendChannelNotificationRequest(request.getMessage(), channel, Recipient.from(user));
-            });
-        }).forEach(sendChannelNotificationRequest -> {
-            logger.debug("Sending notification to channel {} for recipient {}",
-                    sendChannelNotificationRequest.channel(), sendChannelNotificationRequest.recipient());
-        });
+        subscribedUsers.getUsers().parallelStream()
+                .flatMap(user -> user.getChannels().stream()
+                        .map(channel -> SendChannelNotificationRequest.from(request, channel, Recipient.from(user))))
+                .forEach(this::processNotification);
+    }
+
+    private Optional<NotificationService> getNotificationService(Channel channel) {
+        return Optional.ofNullable(notificationServices.get(channel));
+    }
+
+    private void processNotification(SendChannelNotificationRequest request) {
+        logger.debug("Sending notification to channel {} for recipient {}", request.channel(), request.recipient());
+
+        getNotificationService(request.channel()).ifPresentOrElse(
+                notificationService -> sendNotificationWithService(request, notificationService),
+                () -> logger.error("No notification service found for channel {}", request.channel()));
+    }
+
+    private void sendNotificationWithService(SendChannelNotificationRequest request,
+            NotificationService notificationService) {
+        logger.debug("Sending notification to channel {} for recipient {}", request.channel(), request.recipient());
+
+        try {
+            notificationService.send(request.message(), request.recipient());
+        } catch (Exception e) {
+            logger.error("Failed to send notification to channel {} for recipient {}", request.channel(),
+                    request.recipient(), e);
+        }
     }
 }
