@@ -37,7 +37,7 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
         logger.debug("Sending notification {}", request);
 
         var subscribedUsers = userService.getSubscribedUsersByTopic(request.getCategory());
-        subscribedUsers.getUsers().parallelStream()
+        subscribedUsers.users().parallelStream()
                 .flatMap(user -> user.getChannels().stream()
                         .map(channel -> SendChannelNotificationRequest.from(request, channel, Recipient.from(user))))
                 .forEach(this::processNotification);

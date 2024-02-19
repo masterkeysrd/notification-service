@@ -32,6 +32,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public GetSubscribedUsersResponse getSubscribedUsersByTopic(String topic) {
         logger.debug("Getting subscribed users by topic {}", topic);
-        return new GetSubscribedUsersResponse(users);
+        return GetSubscribedUsersResponse.of(users);
     }
 }

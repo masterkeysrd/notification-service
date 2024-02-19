@@ -2,19 +2,15 @@ package com.masterkeys.notificationservice.service.dto;
 
 import java.util.List;
 
-public class GetSubscribedUsersResponse {
-    private List<GetSubscribedUsersResponseItem> users;
-
-    public GetSubscribedUsersResponse(List<GetSubscribedUsersResponseItem> users) {
-        this.users = users;
+public record GetSubscribedUsersResponse(List<GetSubscribedUsersResponseItem> users) {
+    public GetSubscribedUsersResponse {
+        if (users == null) {
+            throw new IllegalArgumentException("Users cannot be null");
+        }
     }
 
-    public List<GetSubscribedUsersResponseItem> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<GetSubscribedUsersResponseItem> users) {
-        this.users = users;
+    public static GetSubscribedUsersResponse of(List<GetSubscribedUsersResponseItem> users) {
+        return new GetSubscribedUsersResponse(users);
     }
 
     @Override
