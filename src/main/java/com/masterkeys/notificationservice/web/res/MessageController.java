@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.masterkeys.notificationservice.service.MessageService;
 import com.masterkeys.notificationservice.service.dto.SendMessageRequest;
 import com.masterkeys.notificationservice.service.dto.SendMessageResponse;
 
@@ -15,9 +16,15 @@ import com.masterkeys.notificationservice.service.dto.SendMessageResponse;
 public class MessageController {
     Logger logger = LoggerFactory.getLogger(MessageController.class);
 
+    private final MessageService messageService;
+
+    public MessageController(MessageService messageService) {
+        this.messageService = messageService;
+    }
+
     @PostMapping("")
     public SendMessageResponse sendMessage(@RequestBody SendMessageRequest request) {
         logger.debug("REST request to send message: {}", request);
-        return new SendMessageResponse("Message sent successfully");
+        return messageService.send(request);
     }
 }
