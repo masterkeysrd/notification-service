@@ -5,60 +5,21 @@ import java.util.UUID;
 
 import com.masterkeys.notificationservice.model.Channel;
 
-public class GetSubscribedUsersResponseItem {
-    private UUID id;
-    private String phoneNumber;
-    private String email;
-    private String deviceToken;
-    private List<Channel> channels;
+public record GetSubscribedUsersResponseItem(UUID id, String phoneNumber, String email, String deviceToken,
+        List<Channel> channels) {
+    public GetSubscribedUsersResponseItem {
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
 
-    public GetSubscribedUsersResponseItem(UUID id, String phoneNumber, String email, String deviceToken,
+        if (channels == null) {
+            throw new IllegalArgumentException("Channels cannot be null");
+        }
+    }
+
+    public static GetSubscribedUsersResponseItem of(UUID id, String phoneNumber, String email, String deviceToken,
             List<Channel> channels) {
-        this.id = id;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.deviceToken = deviceToken;
-        this.channels = channels;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getDeviceToken() {
-        return deviceToken;
-    }
-
-    public void setDeviceToken(String deviceToken) {
-        this.deviceToken = deviceToken;
-    }
-
-    public List<Channel> getChannels() {
-        return channels;
-    }
-
-    public void setChannels(List<Channel> channels) {
-        this.channels = channels;
+        return new GetSubscribedUsersResponseItem(id, phoneNumber, email, deviceToken, channels);
     }
 
     @Override

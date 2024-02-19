@@ -3,8 +3,8 @@ package com.masterkeys.notificationservice.service.dto;
 import java.util.UUID;
 
 public record Recipient(UUID id, String phoneNumber, String email, String deviceToken) {
-    public static Recipient from(GetSubscribedUsersResponseItem user) {
-        return new Recipient(user.getId(), user.getPhoneNumber(), user.getEmail(), user.getDeviceToken());
+    public static Recipient of(GetSubscribedUsersResponseItem user) {
+        return new Recipient(user.id(), user.phoneNumber(), user.email(), user.deviceToken());
     }
 
     @Override

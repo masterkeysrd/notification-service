@@ -38,8 +38,8 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
 
         var subscribedUsers = userService.getSubscribedUsersByTopic(request.getCategory());
         subscribedUsers.users().parallelStream()
-                .flatMap(user -> user.getChannels().stream()
-                        .map(channel -> SendChannelNotificationRequest.from(request, channel, Recipient.from(user))))
+                .flatMap(user -> user.channels().stream()
+                        .map(channel -> SendChannelNotificationRequest.from(request, channel, Recipient.of(user))))
                 .forEach(this::processNotification);
 
         return CompletableFuture.completedFuture(null);
