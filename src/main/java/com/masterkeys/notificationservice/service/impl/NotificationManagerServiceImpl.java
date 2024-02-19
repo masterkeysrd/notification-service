@@ -36,7 +36,7 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
     public CompletableFuture<Void> sendNotification(SendNotificationRequest request) {
         logger.debug("Sending notification {}", request);
 
-        var subscribedUsers = userService.getSubscribedUsersByTopic(request.getCategory());
+        var subscribedUsers = userService.getSubscribedUsersByTopic(request.category());
         subscribedUsers.users().parallelStream()
                 .flatMap(user -> user.channels().stream()
                         .map(channel -> SendChannelNotificationRequest.from(request, channel, Recipient.of(user))))

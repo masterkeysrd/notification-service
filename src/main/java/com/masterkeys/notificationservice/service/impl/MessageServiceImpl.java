@@ -22,7 +22,7 @@ public class MessageServiceImpl implements MessageService {
 
     public SendMessageResponse send(SendMessageRequest request) {
         logger.debug("Sending message {}", request);
-        var notificationRequest = new SendNotificationRequest(
+        var notificationRequest = SendNotificationRequest.of(
                 request.message(),
                 request.category());
 
