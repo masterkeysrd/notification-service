@@ -23,8 +23,8 @@ public class MessageServiceImpl implements MessageService {
     public SendMessageResponse send(SendMessageRequest request) {
         logger.debug("Sending message {}", request);
         var notificationRequest = new SendNotificationRequest(
-                request.getMessage(),
-                request.getCategory());
+                request.message(),
+                request.category());
 
         notificationManagerService.sendNotification(notificationRequest);
 

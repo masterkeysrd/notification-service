@@ -1,31 +1,18 @@
 package com.masterkeys.notificationservice.service.dto;
 
-public class SendMessageRequest {
-    String category;
-    String message;
+public record SendMessageRequest(String category, String message) {
+    public SendMessageRequest {
+        if (category == null) {
+            throw new IllegalArgumentException("Category cannot be null");
+        }
 
-    public SendMessageRequest() {
+        if (message == null) {
+            throw new IllegalArgumentException("Message cannot be null");
+        }
     }
 
-    public SendMessageRequest(String category, String message) {
-        this.category = category;
-        this.message = message;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+    public static SendMessageRequest of(String category, String message) {
+        return new SendMessageRequest(category, message);
     }
 
     @Override
