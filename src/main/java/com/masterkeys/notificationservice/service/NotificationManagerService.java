@@ -1,7 +1,9 @@
 package com.masterkeys.notificationservice.service;
 
+import java.util.concurrent.CompletableFuture;
+
 import com.masterkeys.notificationservice.service.dto.SendNotificationRequest;
 
 public interface NotificationManagerService {
-    void sendNotification(SendNotificationRequest request);
+    CompletableFuture<Void> sendNotification(SendNotificationRequest request);
 }

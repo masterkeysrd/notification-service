@@ -2,9 +2,11 @@ package com.masterkeys.notificationservice.service.impl;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.masterkeys.notificationservice.model.Channel;
@@ -30,7 +32,8 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
     }
 
     @Override
-    public void sendNotification(SendNotificationRequest request) {
+    @Async
+    public CompletableFuture<Void> sendNotification(SendNotificationRequest request) {
         logger.debug("Sending notification {}", request);
 
         var subscribedUsers = userService.getSubscribedUsersByTopic(request.getCategory());
@@ -38,6 +41,8 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
                 .flatMap(user -> user.getChannels().stream()
                         .map(channel -> SendChannelNotificationRequest.from(request, channel, Recipient.from(user))))
                 .forEach(this::processNotification);
+
+        return CompletableFuture.completedFuture(null);
     }
 
     private Optional<NotificationService> getNotificationService(Channel channel) {
