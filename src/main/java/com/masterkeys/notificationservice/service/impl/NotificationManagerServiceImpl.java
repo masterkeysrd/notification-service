@@ -18,12 +18,16 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
     private final Logger logger = LoggerFactory.getLogger(NotificationManagerServiceImpl.class);
 
     private final UserService userService;
+    private final NotificationRecorderService notificationRecorderService;
 
     private final Map<Channel, NotificationService> notificationServices;
 
     public NotificationManagerServiceImpl(UserService userService, EmailNotificationService emailNotificationService,
-            PushNotificationService pushNotificationService, SMSNotificationService smsNotificationService) {
+            PushNotificationService pushNotificationService, SMSNotificationService smsNotificationService,
+            NotificationRecorderService notificationRecorderService) {
+
         this.userService = userService;
+        this.notificationRecorderService = notificationRecorderService;
 
         notificationServices = Map.of(
                 Channel.EMAIL, emailNotificationService,
@@ -52,20 +56,14 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
     private void processNotification(SendChannelNotificationRequest request) {
         logger.debug("Sending notification to channel {} for recipient {}", request.channel(), request.recipient());
 
-        getNotificationService(request.channel()).ifPresentOrElse(
-                notificationService -> sendNotificationWithService(request, notificationService),
-                () -> logger.error("No notification service found for channel {}", request.channel()));
-    }
+        getNotificationService(request.channel())
+                .ifPresentOrElse(
+                        service -> {
+                            SendNotificationResponse response = service.send(request.message(), request.recipient());
+                            notificationRecorderService.record(RecordNotificationRequest.of(response.notificationId(),
+                                    response.userId(), response.channel(), response.destination(), response.message(),
+                                    response.status(), response.timestamp()));
 
-    private void sendNotificationWithService(SendChannelNotificationRequest request,
-            NotificationService notificationService) {
-        logger.debug("Sending notification to channel {} for recipient {}", request.channel(), request.recipient());
-
-        try {
-            notificationService.send(request.message(), request.recipient());
-        } catch (Exception e) {
-            logger.error("Failed to send notification to channel {} for recipient {}", request.channel(),
-                    request.recipient(), e);
-        }
+                        }, () -> logger.warn("No service found for channel {}", request.channel()));
     }
 }
