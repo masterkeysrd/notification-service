@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.masterkeys.notificationservice.model.Channel;
 import com.masterkeys.notificationservice.service.SMSNotificationService;
-import com.masterkeys.notificationservice.service.dto.Recipient;
+import com.masterkeys.notificationservice.service.dto.SendNotificationRequest;
 import com.masterkeys.notificationservice.service.dto.SendNotificationResponse;
 import com.masterkeys.notificationservice.utils.SimulatorUtil;
 
@@ -16,14 +16,17 @@ import com.masterkeys.notificationservice.utils.SimulatorUtil;
 public class SMSNotificationServiceImpl implements SMSNotificationService {
     private final Logger logger = LoggerFactory.getLogger(SMSNotificationServiceImpl.class);
 
-    public SendNotificationResponse send(String message, Recipient recipient) {
-        logger.debug("Sending SMS notification to {} with message: {}", recipient.phoneNumber(), message);
+    public SendNotificationResponse send(SendNotificationRequest request) {
+        logger.debug("Sending SMS notification to {} with message: {}", request.recipient(), request.message());
 
         // Simulate the time it takes to send an SMS
         SimulatorUtil.simulateWork();
 
         var id = UUID.randomUUID();
-        return SendNotificationResponse.of(id, recipient.id(), Channel.SMS, recipient.phoneNumber(), message,
-                (int) (System.currentTimeMillis() / 1000), "SENT");
+        var timestamp = (int) (System.currentTimeMillis() / 1000);
+        var recipient = request.recipient();
+
+        return SendNotificationResponse.of(id, recipient.id(), Channel.SMS, recipient.phoneNumber(), request.message(),
+                timestamp, "SENT");
     }
 }

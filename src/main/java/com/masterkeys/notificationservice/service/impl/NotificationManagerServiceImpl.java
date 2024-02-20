@@ -59,7 +59,7 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
         getNotificationService(request.channel())
                 .ifPresentOrElse(
                         service -> {
-                            SendNotificationResponse response = service.send(request.message(), request.recipient());
+                            SendNotificationResponse response = service.send(SendNotificationRequest.of(request.recipient(), request.message()));
                             notificationRecorderService.record(RecordNotificationRequest.of(response.notificationId(),
                                     response.userId(), response.channel(), response.destination(), response.message(),
                                     response.status(), response.timestamp()));
