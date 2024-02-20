@@ -1,7 +1,7 @@
 package com.masterkeys.notificationservice.service.dto;
 
-public record SendNotificationRequest(String message, String category) {
-    public SendNotificationRequest {
+public record FanOutNotificationRequest(String message, String category) {
+    public FanOutNotificationRequest {
         if (message == null) {
             throw new IllegalArgumentException("Message cannot be null");
         }
@@ -11,13 +11,13 @@ public record SendNotificationRequest(String message, String category) {
         }
     }
 
-    public static SendNotificationRequest of(String message, String category) {
-        return new SendNotificationRequest(message, category);
+    public static FanOutNotificationRequest of(String message, String category) {
+        return new FanOutNotificationRequest(message, category);
     }
 
     @Override
     public String toString() {
-        return "SendNotificationRequest{" +
+        return "FanOutNotificationRequest{" +
                 "message='" + message + '\'' +
                 ", category='" + category + '\'' +
                 '}';

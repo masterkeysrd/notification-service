@@ -15,7 +15,7 @@ public record SendChannelNotificationRequest(String message, Channel channel, Re
         }
     }
 
-    public static SendChannelNotificationRequest from(SendNotificationRequest request, Channel channel,
+    public static SendChannelNotificationRequest from(FanOutNotificationRequest request, Channel channel,
             Recipient recipient) {
         return new SendChannelNotificationRequest(request.message(), channel, recipient);
     }

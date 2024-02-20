@@ -37,7 +37,7 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
 
     @Override
     @Async
-    public CompletableFuture<Void> sendNotification(SendNotificationRequest request) {
+    public CompletableFuture<Void> fanOut(FanOutNotificationRequest request) {
         logger.debug("Sending notification {}", request);
 
         var subscribedUsers = userService.getSubscribedUsersByTopic(request.category());
