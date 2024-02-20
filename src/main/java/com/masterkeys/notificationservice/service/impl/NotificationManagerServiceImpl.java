@@ -40,11 +40,12 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
     public CompletableFuture<Void> fanOut(FanOutNotificationRequest request) {
         logger.debug("Sending notification {}", request);
 
-        var subscribedUsers = userService.getSubscribedUsersByTopic(request.category());
-        subscribedUsers.users().parallelStream()
+        userService.getSubscribedUsersByTopic(request.category())
+                .users()
+                .parallelStream()
                 .flatMap(user -> user.channels().stream()
-                        .map(channel -> SendChannelNotificationRequest.from(request, channel, Recipient.of(user))))
-                .forEach(this::processNotification);
+                        .map(channel -> ChannelNotification.of(request, channel, Recipient.of(user))))
+                .forEach(this::process);
 
         return CompletableFuture.completedFuture(null);
     }
@@ -53,17 +54,30 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
         return Optional.ofNullable(notificationServices.get(channel));
     }
 
-    private void processNotification(SendChannelNotificationRequest request) {
-        logger.debug("Sending notification to channel {} for recipient {}", request.channel(), request.recipient());
+    private void process(ChannelNotification channelNotification) {
+        logger.debug("Sending notification to channel {} for recipient {}", channelNotification.channel(),
+                channelNotification.recipient());
 
-        getNotificationService(request.channel())
-                .ifPresentOrElse(
-                        service -> {
-                            SendNotificationResponse response = service.send(SendNotificationRequest.of(request.recipient(), request.message()));
-                            notificationRecorderService.record(RecordNotificationRequest.of(response.notificationId(),
-                                    response.userId(), response.channel(), response.destination(), response.message(),
-                                    response.status(), response.timestamp()));
+        var notificationServiceOpt = getNotificationService(channelNotification.channel());
 
-                        }, () -> logger.warn("No service found for channel {}", request.channel()));
+        if (notificationServiceOpt.isPresent()) {
+            var notificationService = notificationServiceOpt.get();
+            var request = SendNotificationRequest.of(channelNotification.recipient(), channelNotification.message());
+            var response = notificationService.send(request);
+
+            notificationRecorderService.record(
+                    RecordNotificationRequest.of(response.notificationId(), response.userId(), response.channel(),
+                            response.destination(), response.message(), response.status(), response.timestamp()));
+
+        } else {
+            logger.warn("No service found for channel {}", channelNotification.channel());
+        }
+
+    }
+
+    private static record ChannelNotification(Channel channel, Recipient recipient, String message) {
+        static ChannelNotification of(FanOutNotificationRequest request, Channel channel, Recipient recipient) {
+            return new ChannelNotification(channel, recipient, request.message());
+        }
     }
 }

@@ -3,6 +3,9 @@ package com.masterkeys.notificationservice.service;
 import com.masterkeys.notificationservice.service.dto.SendNotificationRequest;
 import com.masterkeys.notificationservice.service.dto.SendNotificationResponse;
 
+/**
+ * Service to send notifications
+ */
 public interface NotificationService {
     /**
      * Send a notification to a recipient
