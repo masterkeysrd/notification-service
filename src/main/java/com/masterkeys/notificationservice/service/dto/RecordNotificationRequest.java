@@ -3,6 +3,7 @@ package com.masterkeys.notificationservice.service.dto;
 import java.util.UUID;
 
 import com.masterkeys.notificationservice.model.Channel;
+import com.masterkeys.notificationservice.model.NotificationRecord;
 
 public record RecordNotificationRequest(UUID notificationId, UUID userId, Channel channel, String destination,
         String message, String status, int timestamp) {
@@ -33,6 +34,11 @@ public record RecordNotificationRequest(UUID notificationId, UUID userId, Channe
     public static RecordNotificationRequest of(UUID notificationId, UUID userId, Channel channel, String destination,
             String message, String status, int timestamp) {
         return new RecordNotificationRequest(notificationId, userId, channel, destination, message, status, timestamp);
+    }
+
+    public NotificationRecord toNotificationRecord() {
+        return new NotificationRecord(userId.toString(), channel, "", destination,
+                message, status, timestamp);
     }
 
     @Override
