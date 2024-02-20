@@ -1,0 +1,12 @@
+name: notification-service
+
+services:
+  mongo:
+    image: mongo:7.0.5
+    healthcheck:
+      test: "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017/test --quiet"
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    ports:
+      - 27017:27017
