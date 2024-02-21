@@ -22,7 +22,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
         // Simulate the time it takes to send a push notification
         SimulatorUtil.simulateWork();
 
-        var id = UUID.randomUUID();
+        var id = UUID.randomUUID().toString();
         var timestamp = (int) (System.currentTimeMillis() / 1000);
         var recipient = request.recipient();
 

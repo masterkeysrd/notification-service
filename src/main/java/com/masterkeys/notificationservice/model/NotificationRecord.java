@@ -8,7 +8,7 @@ public class NotificationRecord {
 
     @Id
     private String id;
-
+    private String notificationId;
     private String userId;
     private Channel channel;
     private String category;
@@ -20,8 +20,10 @@ public class NotificationRecord {
     public NotificationRecord() {
     }
 
-    public NotificationRecord(String userId, Channel channel, String category, String destination, String message,
-            String status, int timestamp) {
+    public NotificationRecord(String id, String notificationId, String userId, Channel channel, String category,
+            String destination, String message, String status, int timestamp) {
+        this.id = id;
+        this.notificationId = notificationId;
         this.userId = userId;
         this.channel = channel;
         this.category = category;
@@ -31,12 +33,26 @@ public class NotificationRecord {
         this.timestamp = timestamp;
     }
 
+    public static NotificationRecord of(String notificationId, String userId, Channel channel, String category,
+            String destination, String message, String status, int timestamp) {
+        return new NotificationRecord(null, notificationId, userId, channel, category, destination, message, status,
+                timestamp);
+    }
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getNotificationId() {
+        return notificationId;
+    }
+
+    public void setNotificationId(String notificationId) {
+        this.notificationId = notificationId;
     }
 
     public String getUserId() {
@@ -99,13 +115,14 @@ public class NotificationRecord {
     public String toString() {
         return "NotificationRecord{" +
                 "id='" + id + '\'' +
+                ", notificationId='" + notificationId + '\'' +
                 ", userId='" + userId + '\'' +
-                ", channel=" + channel +
+                ", channel='" + channel + '\'' +
                 ", category='" + category + '\'' +
                 ", destination='" + destination + '\'' +
                 ", message='" + message + '\'' +
                 ", status='" + status + '\'' +
-                ", timestamp=" + timestamp +
+                ", timestamp='" + timestamp + '\'' +
                 '}';
     }
 

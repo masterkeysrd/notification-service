@@ -3,7 +3,7 @@ package com.masterkeys.notificationservice.service.dto;
 import com.masterkeys.notificationservice.model.Channel;
 import com.masterkeys.notificationservice.model.NotificationRecord;
 
-public record GetHistoryResponseItem(String id, String userId, Channel channel, String category, String destination,
+public record GetHistoryResponseItem(String id, String notificationId, String userId, Channel channel, String category, String destination,
         String message, String status, int timestamp) {
     public GetHistoryResponseItem {
     }
@@ -11,6 +11,7 @@ public record GetHistoryResponseItem(String id, String userId, Channel channel, 
     public static GetHistoryResponseItem of(NotificationRecord record) {
         return new GetHistoryResponseItem(
                 record.getId(),
+                record.getNotificationId(),
                 record.getUserId(),
                 record.getChannel(),
                 record.getCategory(),

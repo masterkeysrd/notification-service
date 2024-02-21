@@ -22,7 +22,7 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
         // Simulate the time it takes to send an email
         SimulatorUtil.simulateWork();
 
-        var id = UUID.randomUUID();
+        var id = UUID.randomUUID().toString();
         var recipient = request.recipient();
         var timestamp = (int) (System.currentTimeMillis() / 1000);
 

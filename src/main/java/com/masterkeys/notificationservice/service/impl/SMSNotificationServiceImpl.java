@@ -22,7 +22,7 @@ public class SMSNotificationServiceImpl implements SMSNotificationService {
         // Simulate the time it takes to send an SMS
         SimulatorUtil.simulateWork();
 
-        var id = UUID.randomUUID();
+        var id = UUID.randomUUID().toString();
         var timestamp = (int) (System.currentTimeMillis() / 1000);
         var recipient = request.recipient();
 

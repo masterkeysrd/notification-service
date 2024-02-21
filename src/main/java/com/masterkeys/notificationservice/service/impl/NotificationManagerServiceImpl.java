@@ -66,7 +66,7 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
             var response = notificationService.send(request);
 
             notificationRecorderService.record(
-                    RecordNotificationRequest.of(response.notificationId(), response.userId(), response.channel(),
+                    RecordNotificationRequest.of(response.notificationId(), response.userId(), channelNotification.categoryId(), response.channel(),
                             response.destination(), response.message(), response.status(), response.timestamp()));
 
         } else {
@@ -75,9 +75,9 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
 
     }
 
-    private static record ChannelNotification(Channel channel, Recipient recipient, String message) {
+    private static record ChannelNotification(String categoryId, Channel channel, Recipient recipient, String message) {
         static ChannelNotification of(FanOutNotificationRequest request, Channel channel, Recipient recipient) {
-            return new ChannelNotification(channel, recipient, request.message());
+            return new ChannelNotification(request.category(), channel, recipient, request.message());
         }
     }
 }

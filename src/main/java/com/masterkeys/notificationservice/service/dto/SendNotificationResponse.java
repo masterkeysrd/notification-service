@@ -1,10 +1,8 @@
 package com.masterkeys.notificationservice.service.dto;
 
-import java.util.UUID;
-
 import com.masterkeys.notificationservice.model.Channel;
 
-public record SendNotificationResponse(UUID notificationId, String userId, Channel channel, String destination,
+public record SendNotificationResponse(String notificationId, String userId, Channel channel, String destination,
         String message, int timestamp, String status) {
     public SendNotificationResponse {
         if (notificationId == null) {
@@ -27,7 +25,7 @@ public record SendNotificationResponse(UUID notificationId, String userId, Chann
         }
     }
 
-    public static SendNotificationResponse of(UUID notificationId, String userId, Channel channel, String destination,
+    public static SendNotificationResponse of(String notificationId, String userId, Channel channel, String destination,
             String message, int timestamp, String status) {
         return new SendNotificationResponse(notificationId, userId, channel, destination, message, timestamp, status);
     }

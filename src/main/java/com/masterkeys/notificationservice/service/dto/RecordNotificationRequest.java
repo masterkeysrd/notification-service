@@ -1,11 +1,10 @@
 package com.masterkeys.notificationservice.service.dto;
 
-import java.util.UUID;
-
 import com.masterkeys.notificationservice.model.Channel;
 import com.masterkeys.notificationservice.model.NotificationRecord;
 
-public record RecordNotificationRequest(UUID notificationId, String userId, Channel channel, String destination,
+public record RecordNotificationRequest(String notificationId, String userId, String categoryId, Channel channel,
+        String destination,
         String message, String status, int timestamp) {
     public RecordNotificationRequest {
         if (notificationId == null) {
@@ -13,6 +12,9 @@ public record RecordNotificationRequest(UUID notificationId, String userId, Chan
         }
         if (userId == null) {
             throw new IllegalArgumentException("userId must not be null");
+        }
+        if (categoryId == null) {
+            throw new IllegalArgumentException("categoryId must not be null");
         }
         if (channel == null) {
             throw new IllegalArgumentException("channel must not be null");
@@ -27,18 +29,20 @@ public record RecordNotificationRequest(UUID notificationId, String userId, Chan
             throw new IllegalArgumentException("status must not be null");
         }
         if (timestamp < 0) {
-            throw new IllegalArgumentException("timestamp must not be negative");
+            throw new IllegalArgumentException("timestamp must be greater than or equal to 0");
         }
+
     }
 
-    public static RecordNotificationRequest of(UUID notificationId, String userId, Channel channel, String destination,
-            String message, String status, int timestamp) {
-        return new RecordNotificationRequest(notificationId, userId, channel, destination, message, status, timestamp);
+    public static RecordNotificationRequest of(String notificationId, String userId, String categoryId, Channel channel,
+            String destination, String message, String status, int timestamp) {
+        return new RecordNotificationRequest(notificationId, userId, categoryId, channel, destination,
+                message, status, timestamp);
     }
 
     public NotificationRecord toNotificationRecord() {
-        return new NotificationRecord(userId.toString(), channel, "", destination,
-                message, status, timestamp);
+        return NotificationRecord.of(notificationId, userId, channel, categoryId, destination, message, status,
+                timestamp);
     }
 
     @Override
