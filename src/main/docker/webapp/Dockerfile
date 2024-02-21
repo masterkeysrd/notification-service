@@ -6,4 +6,6 @@ COPY ./src/main/webapp ./src/main/webapp
 RUN npm run build
 
 FROM nginx:1.25.4-alpine
+ENV API_URL=http://localhost:8080
 COPY --from=BUILDER /app/dist /usr/share/nginx/html
+CMD ["nginx", "-g", "daemon off;"]

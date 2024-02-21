@@ -5,6 +5,15 @@ services:
     extends:
       file: ./webapp.yml
       service: webapp
+    environment:
+      - BACKEND_PORT=8080
+      - BACKEND_HOST=backend
+
+  backend:
+    extends:
+      file: ./backend.yml
+      service: backend
+
   mongodb:
     extends:
       file: ./mongodb.yml

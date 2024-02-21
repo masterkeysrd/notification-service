@@ -8,3 +8,13 @@ services:
       dockerfile: src/main/docker/webapp/Dockerfile
     ports:
       - 80:80
+    environment:
+      - BACKEND_HOST=host.docker.internal
+      - BACKEND_PORT=8080
+    volumes:
+      - ./webapp/nginx.conf:/etc/nginx/templates/default.conf.template
+
+  mongodb:
+    extends:
+      file: ./mongodb.yml
+      service: mongo
