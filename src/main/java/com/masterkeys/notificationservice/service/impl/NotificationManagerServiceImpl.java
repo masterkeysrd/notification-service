@@ -1,7 +1,5 @@
 package com.masterkeys.notificationservice.service.impl;
 
-import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
@@ -19,23 +17,18 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
 
     private final UserService userService;
     private final CategoryService categoryService;
+    private final NotificationServiceFactory notificationServiceFactory;
     private final NotificationRecorderService notificationRecorderService;
 
-    private final Map<Channel, NotificationService> notificationServices;
-
-    public NotificationManagerServiceImpl(UserService userService, CategoryService categoryService,
-            EmailNotificationService emailNotificationService,
-            PushNotificationService pushNotificationService, SMSNotificationService smsNotificationService,
+    public NotificationManagerServiceImpl(
+            UserService userService,
+            CategoryService categoryService,
+            NotificationServiceFactory notificationServiceFactory,
             NotificationRecorderService notificationRecorderService) {
-
         this.userService = userService;
         this.categoryService = categoryService;
+        this.notificationServiceFactory = notificationServiceFactory;
         this.notificationRecorderService = notificationRecorderService;
-
-        notificationServices = Map.of(
-                Channel.EMAIL, emailNotificationService,
-                Channel.PUSH, pushNotificationService,
-                Channel.SMS, smsNotificationService);
     }
 
     @Override
@@ -61,15 +54,11 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
         return CompletableFuture.completedFuture(null);
     }
 
-    private Optional<NotificationService> getNotificationService(Channel channel) {
-        return Optional.ofNullable(notificationServices.get(channel));
-    }
-
     private void process(ChannelNotification channelNotification) {
         logger.debug("Sending notification to channel {} for recipient {}", channelNotification.channel(),
                 channelNotification.recipient());
 
-        var notificationServiceOpt = getNotificationService(channelNotification.channel());
+        var notificationServiceOpt = notificationServiceFactory.get(channelNotification.channel());
 
         if (notificationServiceOpt.isPresent()) {
             var notificationService = notificationServiceOpt.get();
