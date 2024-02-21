@@ -1,13 +1,27 @@
-import React from "react";
-import { Box, TextField } from "@mui/material";
+import { Box } from "@mui/material";
+import useGetCategories from "../hooks/useGetCategories";
+import useSendMessage from "../hooks/useSendMessage";
+import SendMessageForm from "../components/SendMessageForm";
 
 function SendMessagePage() {
+  const { categories, getCategories } = useGetCategories();
+  const { loading, success, error, result, sendMessage } = useSendMessage();
+
+  const handleSendMessage = (category: string, message: string) => {
+    sendMessage(category, message);
+  };
+
   return (
-    <Box>
-      <h1>Send Message</h1>
-      <form>
-        <TextField multiline rows={4} label="Message" />
-      </form>
+    <Box m={2}>
+      <SendMessageForm
+        categories={categories}
+        loading={loading}
+        success={success}
+        error={error}
+        result={result || ""}
+        getCategories={getCategories}
+        sendMessage={handleSendMessage}
+      />
     </Box>
   );
 }
