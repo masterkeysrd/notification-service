@@ -11,7 +11,7 @@ public class NotificationRecord {
     private String notificationId;
     private String userId;
     private Channel channel;
-    private String category;
+    private Category category;
     private String destination;
     private String message;
     private String status;
@@ -20,7 +20,7 @@ public class NotificationRecord {
     public NotificationRecord() {
     }
 
-    public NotificationRecord(String id, String notificationId, String userId, Channel channel, String category,
+    public NotificationRecord(String id, String notificationId, String userId, Channel channel, Category category,
             String destination, String message, String status, int timestamp) {
         this.id = id;
         this.notificationId = notificationId;
@@ -33,10 +33,10 @@ public class NotificationRecord {
         this.timestamp = timestamp;
     }
 
-    public static NotificationRecord of(String notificationId, String userId, Channel channel, String category,
+    public static NotificationRecord of(String notificationId, String userId, Channel channel, Category category,
             String destination, String message, String status, int timestamp) {
-        return new NotificationRecord(null, notificationId, userId, channel, category, destination, message, status,
-                timestamp);
+        return new NotificationRecord(null, notificationId, userId, channel, category,
+                destination, message, status, timestamp);
     }
 
     public String getId() {
@@ -71,12 +71,20 @@ public class NotificationRecord {
         this.channel = channel;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public String getCategoryId() {
+        return category.getId();
+    }
+
+    public String getCategoryName() {
+        return category.getName();
     }
 
     public String getDestination() {
@@ -117,13 +125,12 @@ public class NotificationRecord {
                 "id='" + id + '\'' +
                 ", notificationId='" + notificationId + '\'' +
                 ", userId='" + userId + '\'' +
-                ", channel='" + channel + '\'' +
-                ", category='" + category + '\'' +
+                ", channel=" + channel +
+                ", category=" + category +
                 ", destination='" + destination + '\'' +
                 ", message='" + message + '\'' +
                 ", status='" + status + '\'' +
-                ", timestamp='" + timestamp + '\'' +
+                ", timestamp=" + timestamp +
                 '}';
     }
-
 }

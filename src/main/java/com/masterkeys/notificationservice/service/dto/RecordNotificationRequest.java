@@ -1,9 +1,11 @@
 package com.masterkeys.notificationservice.service.dto;
 
+import com.masterkeys.notificationservice.model.Category;
 import com.masterkeys.notificationservice.model.Channel;
 import com.masterkeys.notificationservice.model.NotificationRecord;
 
-public record RecordNotificationRequest(String notificationId, String userId, String categoryId, Channel channel,
+public record RecordNotificationRequest(String notificationId, String userId, String categoryId, String categoryName,
+        Channel channel,
         String destination,
         String message, String status, int timestamp) {
     public RecordNotificationRequest {
@@ -34,14 +36,16 @@ public record RecordNotificationRequest(String notificationId, String userId, St
 
     }
 
-    public static RecordNotificationRequest of(String notificationId, String userId, String categoryId, Channel channel,
+    public static RecordNotificationRequest of(String notificationId, String userId, String categoryId,
+            String categoryName, Channel channel,
             String destination, String message, String status, int timestamp) {
-        return new RecordNotificationRequest(notificationId, userId, categoryId, channel, destination,
+        return new RecordNotificationRequest(notificationId, userId, categoryId, categoryName, channel, destination,
                 message, status, timestamp);
     }
 
     public NotificationRecord toNotificationRecord() {
-        return NotificationRecord.of(notificationId, userId, channel, categoryId, destination, message, status,
+        return NotificationRecord.of(notificationId, userId, channel, new Category(categoryId, categoryName),
+                destination, message, status,
                 timestamp);
     }
 

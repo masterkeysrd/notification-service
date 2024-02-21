@@ -18,15 +18,18 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
     private final Logger logger = LoggerFactory.getLogger(NotificationManagerServiceImpl.class);
 
     private final UserService userService;
+    private final CategoryService categoryService;
     private final NotificationRecorderService notificationRecorderService;
 
     private final Map<Channel, NotificationService> notificationServices;
 
-    public NotificationManagerServiceImpl(UserService userService, EmailNotificationService emailNotificationService,
+    public NotificationManagerServiceImpl(UserService userService, CategoryService categoryService,
+            EmailNotificationService emailNotificationService,
             PushNotificationService pushNotificationService, SMSNotificationService smsNotificationService,
             NotificationRecorderService notificationRecorderService) {
 
         this.userService = userService;
+        this.categoryService = categoryService;
         this.notificationRecorderService = notificationRecorderService;
 
         notificationServices = Map.of(
@@ -40,11 +43,19 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
     public CompletableFuture<Void> fanOut(FanOutNotificationRequest request) {
         logger.debug("Sending notification {}", request);
 
+        var categoryOpt = categoryService.getById(request.category());
+
+        if (categoryOpt.isEmpty()) {
+            logger.warn("No category found for id {}", request.category());
+            return CompletableFuture.completedFuture(null);
+        }
+
         userService.getSubscribedUsersByTopic(request.category())
                 .users()
                 .parallelStream()
                 .flatMap(user -> user.channels().stream()
-                        .map(channel -> ChannelNotification.of(request, channel, Recipient.of(user))))
+                        .map(channel -> ChannelNotification.of(request, categoryOpt.get(), channel,
+                                Recipient.of(user))))
                 .forEach(this::process);
 
         return CompletableFuture.completedFuture(null);
@@ -66,7 +77,8 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
             var response = notificationService.send(request);
 
             notificationRecorderService.record(
-                    RecordNotificationRequest.of(response.notificationId(), response.userId(), channelNotification.categoryId(), response.channel(),
+                    RecordNotificationRequest.of(response.notificationId(), response.userId(),
+                            channelNotification.categoryId(), channelNotification.categoryName(), response.channel(),
                             response.destination(), response.message(), response.status(), response.timestamp()));
 
         } else {
@@ -75,9 +87,12 @@ public class NotificationManagerServiceImpl implements NotificationManagerServic
 
     }
 
-    private static record ChannelNotification(String categoryId, Channel channel, Recipient recipient, String message) {
-        static ChannelNotification of(FanOutNotificationRequest request, Channel channel, Recipient recipient) {
-            return new ChannelNotification(request.category(), channel, recipient, request.message());
+    private static record ChannelNotification(String categoryId, String categoryName, Channel channel,
+            Recipient recipient, String message) {
+        static ChannelNotification of(FanOutNotificationRequest request, GetCategoryResponseItem category,
+                Channel channel, Recipient recipient) {
+            return new ChannelNotification(category.id(), category.name(), channel, recipient,
+                    request.message());
         }
     }
 }
