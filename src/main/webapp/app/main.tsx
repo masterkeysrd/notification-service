@@ -4,6 +4,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import RootRoute from "./routes/RootRoute";
 import ErrorPage from "./pages/ErrorPage";
 import SendMessagePage from "./pages/SendMessagePage";
+import NotificationHistoryPage from "./pages/NotificationHistoryPage";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
         path: "/send-message",
         element: <SendMessagePage />,
       },
+      {
+        path: "/notification-history",
+        element: <NotificationHistoryPage />,
+      }
     ],
   },
 ]);

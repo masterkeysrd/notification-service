@@ -15,7 +15,7 @@ function RootRoute() {
             Notification Service
           </Typography>
           <Button color="inherit" component={Link} to="/send-message">Send Message</Button>
-          <Button color="inherit" component={Link} to="/history">History</Button>
+          <Button color="inherit" component={Link} to="/notification-history">Notification History</Button>
         </Toolbar>
       </AppBar>
 
