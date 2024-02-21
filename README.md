@@ -64,3 +64,15 @@ npm run dev # Start the frontend
 ```
 
 > The backend will be available at <http://localhost:8080> and the frontend will be available at <http://localhost:5173/>
+
+## API Documentation
+
+The API documentation is available at <http://localhost:8080/swagger-ui.html>
+
+## Running the tests
+
+The tests can be run using the following command:
+
+```bash
+./gradlew test # Run the tests
+```
