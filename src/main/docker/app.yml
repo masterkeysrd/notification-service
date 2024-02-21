@@ -1,6 +1,10 @@
 name: notification-service
 
 services:
+  webapp:
+    extends:
+      file: ./webapp.yml
+      service: webapp
   mongodb:
     extends:
       file: ./mongodb.yml

@@ -1,0 +1,10 @@
+name: notification-service
+
+services:
+  webapp:
+    image: webapp
+    build:
+      context: ../../../
+      dockerfile: src/main/docker/webapp/Dockerfile
+    ports:
+      - 80:80
