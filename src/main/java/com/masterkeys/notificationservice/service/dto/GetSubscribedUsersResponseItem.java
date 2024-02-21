@@ -1,11 +1,11 @@
 package com.masterkeys.notificationservice.service.dto;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.masterkeys.notificationservice.model.Channel;
+import com.masterkeys.notificationservice.model.User;
 
-public record GetSubscribedUsersResponseItem(UUID id, String phoneNumber, String email, String deviceToken,
+public record GetSubscribedUsersResponseItem(String id, String phoneNumber, String email, String deviceToken,
         List<Channel> channels) {
     public GetSubscribedUsersResponseItem {
         if (id == null) {
@@ -17,9 +17,9 @@ public record GetSubscribedUsersResponseItem(UUID id, String phoneNumber, String
         }
     }
 
-    public static GetSubscribedUsersResponseItem of(UUID id, String phoneNumber, String email, String deviceToken,
-            List<Channel> channels) {
-        return new GetSubscribedUsersResponseItem(id, phoneNumber, email, deviceToken, channels);
+    public static GetSubscribedUsersResponseItem of(User user) {
+        return new GetSubscribedUsersResponseItem(user.getId(), user.getPhoneNumber(), user.getEmail(),
+                user.getDeviceToken(), user.getChannels());
     }
 
     @Override

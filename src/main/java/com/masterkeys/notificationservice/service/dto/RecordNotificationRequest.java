@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.masterkeys.notificationservice.model.Channel;
 import com.masterkeys.notificationservice.model.NotificationRecord;
 
-public record RecordNotificationRequest(UUID notificationId, UUID userId, Channel channel, String destination,
+public record RecordNotificationRequest(UUID notificationId, String userId, Channel channel, String destination,
         String message, String status, int timestamp) {
     public RecordNotificationRequest {
         if (notificationId == null) {
@@ -31,7 +31,7 @@ public record RecordNotificationRequest(UUID notificationId, UUID userId, Channe
         }
     }
 
-    public static RecordNotificationRequest of(UUID notificationId, UUID userId, Channel channel, String destination,
+    public static RecordNotificationRequest of(UUID notificationId, String userId, Channel channel, String destination,
             String message, String status, int timestamp) {
         return new RecordNotificationRequest(notificationId, userId, channel, destination, message, status, timestamp);
     }

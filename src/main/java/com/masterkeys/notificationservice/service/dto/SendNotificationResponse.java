@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import com.masterkeys.notificationservice.model.Channel;
 
-public record SendNotificationResponse(UUID notificationId, UUID userId, Channel channel, String destination,
+public record SendNotificationResponse(UUID notificationId, String userId, Channel channel, String destination,
         String message, int timestamp, String status) {
     public SendNotificationResponse {
         if (notificationId == null) {
@@ -27,7 +27,7 @@ public record SendNotificationResponse(UUID notificationId, UUID userId, Channel
         }
     }
 
-    public static SendNotificationResponse of(UUID notificationId, UUID userId, Channel channel, String destination,
+    public static SendNotificationResponse of(UUID notificationId, String userId, Channel channel, String destination,
             String message, int timestamp, String status) {
         return new SendNotificationResponse(notificationId, userId, channel, destination, message, timestamp, status);
     }

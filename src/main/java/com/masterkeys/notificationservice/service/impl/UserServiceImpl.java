@@ -1,14 +1,10 @@
 package com.masterkeys.notificationservice.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.masterkeys.notificationservice.model.Channel;
+import com.masterkeys.notificationservice.repositories.UserRepository;
 import com.masterkeys.notificationservice.service.UserService;
 import com.masterkeys.notificationservice.service.dto.GetSubscribedUsersResponse;
 import com.masterkeys.notificationservice.service.dto.GetSubscribedUsersResponseItem;
@@ -18,20 +14,19 @@ public class UserServiceImpl implements UserService {
 
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    private final List<GetSubscribedUsersResponseItem> users;
+    private final UserRepository userRepository;
 
-    public UserServiceImpl() {
-        users = new ArrayList<>();
-
-        for (int i = 0; i < 1000; i++) {
-            users.add(new GetSubscribedUsersResponseItem(UUID.randomUUID(), "+123456789" + i,
-                    "user" + i + "@example.com", "deviceToken" + i, List.of(Channel.EMAIL, Channel.PUSH, Channel.SMS)));
-        }
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public GetSubscribedUsersResponse getSubscribedUsersByTopic(String topic) {
         logger.debug("Getting subscribed users by topic {}", topic);
-        return GetSubscribedUsersResponse.of(users);
+        var subscribedUsers = userRepository.findBySubscriptions(topic).stream()
+                .map(user -> GetSubscribedUsersResponseItem.of(user)).toList();
+
+        return GetSubscribedUsersResponse.of(subscribedUsers);
+
     }
 }
